@@ -16,16 +16,12 @@ require("tint").setup({
   tint_background_colors = true,  -- Tint background portions of highlight groups
   highlight_ignore_patterns = { "WinSeparator", "Status.*" },  -- Highlight group patterns to ignore, see `string.find`
   window_ignore_function = function(winid)
-    local buf = vim.api.nvim_win_get_buf(winid)
-    local buftype vim.api.nvim_buf_get_option(buf, "buftype")
+    local bufid = vim.api.nvim_win_get_buf(winid)
+    local buftype = vim.api.nvim_buf_get_option(bufid, "buftype")
+    local floating = vim.api.nvim_win_get_config(winid).relative ~= ""
 
-    if buftype == "terminal" then
-      -- Do not tint `terminal`-type buffers
-      return true
-    end
-
-    -- Tint the window
-    return false
+    -- Do not tint `terminal` or floating windows, tint everything else
+    return buftype == "terminal" or floating
   end
 })
 ```
